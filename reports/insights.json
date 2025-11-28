@@ -1,0 +1,68 @@
+{
+  "hypotheses": [
+    {
+      "id": "hyp_campaign_low_ctr_49760a",
+      "title": "Low CTR in campaign",
+      "summary": "Campaign 'Women Seamless Eve yday' has the lowest CTR (0.0000).",
+      "segment_filter": {
+        "campaign_name": "Women Seamless Eve yday"
+      },
+      "validation": {
+        "sample_size": 1,
+        "total_impressions": 435301,
+        "mean_ctr": 0.012377642137279722,
+        "mean_roas": 5.775744934961531,
+        "confidence": 0.7,
+        "comment": "Validated successfully."
+      }
+    },
+    {
+      "id": "hyp_campaign_low_roas_cc0127",
+      "title": "Low ROAS in campaign",
+      "summary": "Campaign 'MEN SIGNATURE SOT' has low ROAS (0.00).",
+      "segment_filter": {
+        "campaign_name": "MEN SIGNATURE SOT"
+      },
+      "validation": {
+        "sample_size": 1,
+        "total_impressions": 388868,
+        "mean_ctr": 0.012317804499213101,
+        "mean_roas": 0.9537101707569663,
+        "confidence": 0.7,
+        "comment": "Validated successfully."
+      }
+    },
+    {
+      "id": "hyp_creative_low_ctr_a951c8",
+      "title": "Low CTR for creative type",
+      "summary": "Creative type 'Video' has low CTR (0.0118).",
+      "segment_filter": {
+        "creative_type": "Video"
+      },
+      "validation": {
+        "sample_size": 1585,
+        "total_impressions": 420546890,
+        "mean_ctr": 0.011847915460746839,
+        "mean_roas": 5.35209605670079,
+        "confidence": 0.7,
+        "comment": "Validated successfully."
+      }
+    },
+    {
+      "id": "hyp_country_low_roas_4bf9fd",
+      "title": "Low ROAS in country",
+      "summary": "Country 'IN' has low ROAS (5.25).",
+      "segment_filter": {
+        "country": "IN"
+      },
+      "validation": {
+        "sample_size": 1149,
+        "total_impressions": 300910000,
+        "mean_ctr": 0.011467408859791965,
+        "mean_roas": 5.245747030942181,
+        "confidence": 0.7,
+        "comment": "Validated successfully."
+      }
+    }
+  ]
+}

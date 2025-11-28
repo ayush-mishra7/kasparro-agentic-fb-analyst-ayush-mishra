@@ -1,0 +1,114 @@
+{
+  "creatives": [
+    {
+      "id": "creative_1",
+      "linked_hypothesis_id": "hyp_campaign_low_ctr_49760a",
+      "persona": "Young Women",
+      "angle": "Empowerment",
+      "primary_text": "Elevate Your Style",
+      "headline": "Women Seamless Eve yday - New Arrivals",
+      "description": "Discover the latest seamless designs for women. Shop now and elevate your style!",
+      "cta": "Shop Now",
+      "platform": "facebook|instagram|both"
+    },
+    {
+      "id": "creative_2",
+      "linked_hypothesis_id": "hyp_campaign_low_ctr_49760a",
+      "persona": "Young Women",
+      "angle": "Convenience",
+      "primary_text": "Seamless Style, Delivered",
+      "headline": "Women Seamless Eve yday - Shop Now",
+      "description": "Get seamless designs delivered right to your doorstep. Shop now and experience the convenience!",
+      "cta": "Shop Now",
+      "platform": "facebook|instagram|both"
+    },
+    {
+      "id": "creative_3",
+      "linked_hypothesis_id": "hyp_campaign_low_ctr_49760a",
+      "persona": "Young Women",
+      "angle": "Affordability",
+      "primary_text": "Affordable Style for Women",
+      "headline": "Women Seamless Eve yday - Affordable Fashion",
+      "description": "Find affordable and stylish seamless designs for women. Shop now and save!",
+      "cta": "Shop Now",
+      "platform": "facebook|instagram|both"
+    },
+    {
+      "id": "creative_4",
+      "linked_hypothesis_id": "hyp_campaign_low_ctr_49760a",
+      "persona": "Young Women",
+      "angle": "Sustainability",
+      "primary_text": "Sustainable Style for Women",
+      "headline": "Women Seamless Eve yday - Eco-Friendly Fashion",
+      "description": "Discover sustainable and stylish seamless designs for women. Shop now and do your part for the planet!",
+      "cta": "Shop Now",
+      "platform": "facebook|instagram|both"
+    },
+    {
+      "id": "creative_5",
+      "linked_hypothesis_id": "hyp_campaign_low_roas_cc0127",
+      "persona": "Young Men",
+      "angle": "Confidence",
+      "primary_text": "Signature Style for Men",
+      "headline": "MEN SIGNATURE SOT - New Arrivals",
+      "description": "Find the perfect signature style for men. Shop now and feel confident!",
+      "cta": "Shop Now",
+      "platform": "facebook|instagram|both"
+    },
+    {
+      "id": "creative_6",
+      "linked_hypothesis_id": "hyp_campaign_low_roas_cc0127",
+      "persona": "Young Men",
+      "angle": "Quality",
+      "primary_text": "Quality Signature Style for Men",
+      "headline": "MEN SIGNATURE SOT - Premium Fashion",
+      "description": "Discover high-quality signature style for men. Shop now and experience the difference!",
+      "cta": "Shop Now",
+      "platform": "facebook|instagram|both"
+    },
+    {
+      "id": "creative_7",
+      "linked_hypothesis_id": "hyp_creative_low_ctr_a951c8",
+      "persona": "Young Women",
+      "angle": "Entertainment",
+      "primary_text": "Get Ready for Fashion",
+      "headline": "Video - New Arrivals",
+      "description": "Watch our latest video and get ready for the latest fashion trends. Shop now and stay ahead!",
+      "cta": "Shop Now",
+      "platform": "facebook|instagram|both"
+    },
+    {
+      "id": "creative_8",
+      "linked_hypothesis_id": "hyp_creative_low_ctr_a951c8",
+      "persona": "Young Women",
+      "angle": "Inspirational",
+      "primary_text": "Empowering Women Through Fashion",
+      "headline": "Video - Empowering Women",
+      "description": "Watch our inspiring video and discover how fashion can empower women. Shop now and be part of the movement!",
+      "cta": "Shop Now",
+      "platform": "facebook|instagram|both"
+    },
+    {
+      "id": "creative_9",
+      "linked_hypothesis_id": "hyp_country_low_roas_4bf9fd",
+      "persona": "Indian Women",
+      "angle": "Cultural",
+      "primary_text": "Traditional Style for Women",
+      "headline": "Indian Fashion - Traditional Wear",
+      "description": "Discover traditional and stylish Indian wear for women. Shop now and celebrate your culture!",
+      "cta": "Shop Now",
+      "platform": "facebook|instagram|both"
+    },
+    {
+      "id": "creative_10",
+      "linked_hypothesis_id": "hyp_country_low_roas_4bf9fd",
+      "persona": "Indian Women",
+      "angle": "Modern",
+      "primary_text": "Modern Indian Style for Women",
+      "headline": "Indian Fashion - Modern Wear",
+      "description": "Find modern and stylish Indian wear for women. Shop now and stay trendy!",
+      "cta": "Shop Now",
+      "platform": "facebook|instagram|both"
+    }
+  ]
+}

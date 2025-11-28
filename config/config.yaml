@@ -1,0 +1,27 @@
+data:
+  path: "data/synthetic_fb_ads_undergarments.csv"
+  date_column: "date"
+
+llm:
+  provider: "groq"
+  model: "llama-3.1-8b-instant"
+  temperature: 0.3
+  max_tokens: 2048
+
+analysis:
+  low_ctr_threshold: 0.01    # 1% CTR
+  min_impressions_threshold: 1000
+  recent_days_window: 30
+
+logging:
+  log_dir: "logs"
+  log_level: "INFO"
+
+reports:
+  output_dir: "reports"
+  insights_file: "insights.json"
+  creatives_file: "creatives.json"
+  report_file: "report.md"
+
+random:
+  seed: 42
