@@ -4,7 +4,7 @@ An end-to-end **agentic AI system** designed to analyze Facebook Ads performance
 
 ---
 
-## 🚀 Overview
+## Overview
 
 This project implements a production-grade, multi-agent architecture inspired by Kasparro’s Applied AI workflow.  
 It autonomously performs:
@@ -21,7 +21,7 @@ Outputs:
 
 ---
 
-## 🧠 Architecture
+## Architecture
 
 ### **Agentic Pipeline**
 ```
@@ -36,7 +36,7 @@ Planner → Insight Agent → Evaluator → Creative Generator → Report Builde
 
 ---
 
-## 🔧 Tech Stack
+## Tech Stack
 
 | Category | Tools |
 |---------|--------|
@@ -106,7 +106,7 @@ logs/events.log.jsonl
 
 ---
 
-## 📊 Example Outputs
+## Example Outputs
 
 ### **Insights**
 - Low CTR campaigns  
@@ -122,7 +122,7 @@ logs/events.log.jsonl
 
 ---
 
-## 🧩 Key Features
+## Key Features
 
 - **LLM-first reasoning** with fallback heuristics  
 - **Fuzzy matching** to clean noisy campaign names  
@@ -147,11 +147,5 @@ Suitable for roles like:
 **Applied AI Engineer • LLM Engineer • AI Solutions Engineer • Growth AI Specialist**
 
 ---
-
-## 📄 License
-MIT License.
-
----
-
 ## ✉️ Contact  
 For questions or collaborations, connect on GitHub or LinkedIn.
