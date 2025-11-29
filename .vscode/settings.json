@@ -1,0 +1,6 @@
+{
+    "python.analysis.extraPaths": [
+        "./src"
+    ],
+    "python.pythonPath": "C:/Users/ayush/anaconda3/envs/kasparro/python.exe"
+}

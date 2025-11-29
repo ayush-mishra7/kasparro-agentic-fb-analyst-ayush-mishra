@@ -1,23 +1,19 @@
-# src/orchestrator/pipeline.py
 import os
 import json
-from src.utils.logging_utils import log_event, load_config
-from src.utils.data_utils import load_dataset, compute_basic_aggregates
-from src.utils.llm_client import LLMClient
-from src.agents.insight_agent import InsightAgent
-from src.agents.planner import PlannerAgent
-from src.agents.evaluator_agent import EvaluatorAgent
-from src.agents.creative_agent import CreativeAgent
-
+from utils.logging_utils import log_event, make_trace_id
+from utils.data_utils import load_dataset, compute_basic_aggregates
+from utils.llm_client import LLMClient
+from agents.insight_agent import InsightAgent
+from agents.planner import PlannerAgent
+from agents.evaluator_agent import EvaluatorAgent
+from agents.creative_agent import CreativeAgent
 
 def ensure_dir(path):
     os.makedirs(path, exist_ok=True)
 
-
 def save_json(path, obj):
     with open(path, "w", encoding="utf-8") as f:
         json.dump(obj, f, indent=2)
-
 
 def save_report(path, evaluated_insights, creatives):
     lines = ["# FB Ads Performance Analysis Report", ""]
@@ -44,59 +40,34 @@ def save_report(path, evaluated_insights, creatives):
     with open(path, "w", encoding="utf-8") as f:
         f.write("\n".join(lines))
 
-
 def run_pipeline(user_query: str):
-    cfg = load_config()
-    reports_dir = cfg.get("reports", {}).get("output_dir", "reports")
+    cfg = {}
+    reports_dir = "reports"
     ensure_dir(reports_dir)
-
-    # 1. Load data
     df = load_dataset()
     data_summary = compute_basic_aggregates(df)
     log_event("data_ready", {"rows": len(df)})
-
-    # 2. Setup LLM client (may raise if no key; allow None fallback in agents)
     try:
         llm = LLMClient()
     except Exception as e:
         log_event("llm_init_failed", {"error": str(e)})
         llm = None
-
-    # 3. Planner (optional use of LLM)
     planner = PlannerAgent(llm) if llm else PlannerAgent(None)
-    plan = planner.plan(user_query, data_summary)
+    plan = planner.plan(user_query, data_summary) if hasattr(planner, "plan") else planner.generate_plan()
     log_event("planner_done", {"plan": plan})
-
-    # 4. Insight Agent (LLM-first with deterministic fallback)
     insight_agent = InsightAgent(llm)
-    insights = insight_agent.generate_insights(user_query, data_summary)
+    insights = insight_agent.generate_insights(df)
     log_event("insights_generated", {"count": len(insights.get("hypotheses", []))})
-
-    # 5. Evaluate hypotheses
     evaluator = EvaluatorAgent()
     evaluated = evaluator.evaluate(df, insights)
     log_event("insights_evaluated", {"count": len(evaluated.get("hypotheses", []))})
-
-    # 6. Creative generation
     creative_agent = CreativeAgent(llm)
     creatives = creative_agent.generate_creatives(evaluated)
     log_event("creatives_generated", {"count": len(creatives.get("creatives", []))})
-
-    # 7. Save outputs
-    insights_path = os.path.join(reports_dir, cfg.get("reports", {}).get("insights_file", "insights.json"))
-    creatives_path = os.path.join(reports_dir, cfg.get("reports", {}).get("creatives_file", "creatives.json"))
-    report_path = os.path.join(reports_dir, cfg.get("reports", {}).get("report_file", "report.md"))
-
+    insights_path = os.path.join(reports_dir, "insights.json")
+    creatives_path = os.path.join(reports_dir, "creatives.json")
+    report_path = os.path.join(reports_dir, "report.md")
     save_json(insights_path, evaluated)
     save_json(creatives_path, creatives)
     save_report(report_path, evaluated, creatives)
-
-    print(f"Saved: {insights_path}")
-    print(f"Saved: {creatives_path}")
-    print(f"Saved: {report_path}")
-
-    log_event("pipeline_complete", {
-        "insights": insights_path,
-        "creatives": creatives_path,
-        "report": report_path
-    })
+    log_event("pipeline_complete", {"insights": insights_path, "creatives": creatives_path, "report": report_path})

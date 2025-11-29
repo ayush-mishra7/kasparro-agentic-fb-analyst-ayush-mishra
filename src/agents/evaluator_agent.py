@@ -1,106 +1,53 @@
 import pandas as pd
-from typing import Dict, Any
-from src.utils.logging_utils import log_event
-from src.utils.data_utils import load_config
-from difflib import get_close_matches
-
+from utils.data_utils import load_config
+from utils.logging_utils import start_span, end_span, log_event, make_trace_id
 
 class EvaluatorAgent:
-    """
-    Evaluator Agent
-    Validates each hypothesis against the raw DataFrame
-    """
-
     def __init__(self):
-        self.cfg = load_config()
+        cfg = load_config()
+        self.low_ctr_threshold = float(cfg.get("analysis", {}).get("low_ctr_threshold", 0.01))
+        self.min_impressions_threshold = int(cfg.get("analysis", {}).get("min_impressions", 1000))
+        self.min_clicks_threshold = int(cfg.get("analysis", {}).get("min_clicks", 10))
+        self.roas_threshold = float(cfg.get("analysis", {}).get("roas_threshold", 1.0))
 
-        # thresholds
-        self.low_ctr_threshold = float(
-            self.cfg.get("analysis", {}).get("low_ctr_threshold", 0.01)
-        )
-        self.min_impressions_threshold = int(
-            self.cfg.get("analysis", {}).get("min_impressions", 100)
-        )
+    def _compute_validation(self, df: pd.DataFrame) -> dict:
+        impressions = int(df["impressions"].sum()) if "impressions" in df.columns and not df.empty else 0
+        clicks = int(df["clicks"].sum()) if "clicks" in df.columns and not df.empty else 0
+        spend = float(df["spend"].sum()) if "spend" in df.columns and not df.empty else 0.0
+        revenue = float(df["revenue"].sum()) if "revenue" in df.columns and not df.empty else 0.0
+        ctr = float(clicks / impressions) if impressions > 0 else 0.0
+        roas = float(revenue / spend) if spend > 0 else None
+        status = "good"
+        if impressions < self.min_impressions_threshold:
+            status = "insufficient_impressions"
+        elif clicks < self.min_clicks_threshold:
+            status = "low_clicks"
+        elif ctr < self.low_ctr_threshold:
+            status = "low_ctr"
+        elif roas is not None and roas < self.roas_threshold:
+            status = "low_roas"
+        return {"sample_size": int(len(df)) if df is not None else 0, "impressions": impressions, "clicks": clicks, "ctr": ctr, "roas": roas, "status": status}
 
-    def _normalize(self, s: Any) -> str:
-        if not isinstance(s, str):
-            return ""
-        return s.strip().lower().replace("_", "").replace("-", "").replace(" ", "")
+    def validate(self, df: pd.DataFrame, segment_filter: dict) -> dict:
+        try:
+            df_seg = df.copy() if df is not None else pd.DataFrame()
+            for col, val in (segment_filter or {}).items():
+                if col not in df_seg.columns:
+                    return {"sample_size": 0, "impressions": 0, "clicks": 0, "ctr": 0.0, "mean_roas": None, "confidence": 0.1, "comment": "segment_not_found"}
+                df_seg = df_seg[df_seg[col] == val]
+            computed = self._compute_validation(df_seg)
+            return {"sample_size": int(len(df_seg)), "total_impressions": int(computed["impressions"]), "mean_ctr": float(computed["ctr"]), "mean_roas": computed["roas"], "confidence": 0.7 if computed["status"] == "good" else 0.5, "comment": "Validated successfully."}
+        except Exception as e:
+            return {"sample_size": 0, "total_impressions": 0, "mean_ctr": 0.0, "mean_roas": None, "confidence": 0.1, "comment": f"error:{str(e)}"}
 
-    def _fuzzy_match(self, value, col_values):
-        """
-        Matches dirty labels like:
-            ' OMEN  Cot ton   Classics '
-        to any best-match campaign name.
-        """
-        if not isinstance(value, str):
-            return None
-        
-        norm_value = self._normalize(value)
-        norm_map = {self._normalize(v): v for v in col_values}
-
-        matches = get_close_matches(norm_value, list(norm_map.keys()), n=1, cutoff=0.4)
-        if matches:
-            return norm_map[matches[0]]
-        return None
-
-    def _apply_segment_filter(self, df: pd.DataFrame, segment: Dict[str, Any]) -> pd.DataFrame:
-        filtered = df.copy()
-
-        for col, val in segment.items():
-            if col not in filtered.columns:
-                continue
-            if val is None:
-                continue
-
-            # fuzzy match on string columns
-            if isinstance(val, str):
-                best = self._fuzzy_match(val, filtered[col].unique())
-                if best:
-                    filtered = filtered[filtered[col] == best]
-            else:
-                filtered = filtered[filtered[col] == val]
-
-        return filtered
-
-    def _compute_validation(self, df: pd.DataFrame) -> Dict[str, Any]:
-        if len(df) == 0:
-            return {
-                "sample_size": 0,
-                "total_impressions": 0,
-                "mean_ctr": 0,
-                "mean_roas": None,
-                "confidence": 0.1,
-                "comment": "No impressions in this segment."
-            }
-
-        impressions = df.get("impressions", pd.Series([0])).sum()
-        clicks = df.get("clicks", pd.Series([0])).sum()
-        spend = df.get("spend", pd.Series([0])).sum()
-        revenue = df.get("revenue", pd.Series([0])).sum()
-
-        ctr = clicks / impressions if impressions > 0 else 0
-        roas = revenue / spend if spend > 0 else None
-
-        return {
-            "sample_size": len(df),
-            "total_impressions": int(impressions),
-            "mean_ctr": ctr,
-            "mean_roas": roas,
-            "confidence": 0.7 if impressions > self.min_impressions_threshold else 0.3,
-            "comment": "Validated successfully."
-        }
-
-    def evaluate(self, df: pd.DataFrame, hypotheses: Dict[str, Any]):
-        results = {"hypotheses": []}
-
-        for hyp in hypotheses.get("hypotheses", []):
-            seg = hyp.get("segment_filter", {})
-            filtered = self._apply_segment_filter(df, seg)
-            validation = self._compute_validation(filtered)
-
-            hyp["validation"] = validation
-            results["hypotheses"].append(hyp)
-
-        log_event("evaluation_results", results)
-        return results
+    def evaluate(self, df: pd.DataFrame, insights: dict, trace_id=None, parent_span=None) -> dict:
+        trace_id = trace_id or make_trace_id()
+        span = start_span("insights.evaluate", trace_id=trace_id, parent_span_id=parent_span, agent="EvaluatorAgent")
+        results = []
+        for h in insights.get("hypotheses", []):
+            seg = h.get("segment_filter", {})
+            validation = self.validate(df, seg)
+            out = {"id": h.get("id"), "title": h.get("title"), "summary": h.get("summary"), "segment_filter": seg, "validation": validation}
+            results.append(out)
+        end_span(span)
+        return {"hypotheses": results}

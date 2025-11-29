@@ -1,0 +1,20 @@
+{
+  "hypotheses": [
+    {
+      "id": "hyp_campaign_low_ctr_0",
+      "title": "Low CTR in campaign",
+      "summary": "Campaign 'Women Seamless Eve yday' has the lowest CTR.",
+      "segment_filter": {
+        "campaign_name": "Women Seamless Eve yday"
+      },
+      "validation": {
+        "sample_size": 1,
+        "total_impressions": 435301,
+        "mean_ctr": 0.012377642137279722,
+        "mean_roas": 5.775744934961531,
+        "confidence": 0.7,
+        "comment": "Validated successfully."
+      }
+    }
+  ]
+}

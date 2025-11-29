@@ -1,27 +1,20 @@
 data:
-  path: "data/synthetic_fb_ads_undergarments.csv"
-  date_column: "date"
-
-llm:
-  provider: "groq"
-  model: "llama-3.1-8b-instant"
-  temperature: 0.3
-  max_tokens: 2048
-
-analysis:
-  low_ctr_threshold: 0.01    # 1% CTR
-  min_impressions_threshold: 1000
-  recent_days_window: 30
+  path: data/synthetic_fb_ads_undergarments.csv
 
 logging:
-  log_dir: "logs"
-  log_level: "INFO"
+  log_dir: logs
 
-reports:
-  output_dir: "reports"
-  insights_file: "insights.json"
-  creatives_file: "creatives.json"
-  report_file: "report.md"
+analysis:
+  low_ctr_threshold: 0.01
+  min_impressions: 1000
+  roas_threshold: 1.0
+  min_clicks: 10
 
-random:
-  seed: 42
+creatives:
+  top_n: 5
+  llm_model: gpt-4.1
+
+reporting:
+  output_path: reports/report.md
+  include_tables: true
+  include_charts: false

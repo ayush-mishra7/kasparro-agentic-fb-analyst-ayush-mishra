@@ -1,0 +1,14 @@
+{
+  "written": {
+    "insights": "reports\\insights.json",
+    "creatives": "reports\\creatives.json",
+    "report_md": "reports\\report.md",
+    "summary_json": "reports\\summary.json"
+  },
+  "counts": {
+    "insights": 3,
+    "creatives": 6
+  },
+  "issues": [],
+  "generated_at": "2025-11-29T14:02:24.715813Z"
+}

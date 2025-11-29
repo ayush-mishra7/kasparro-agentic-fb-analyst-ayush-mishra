@@ -1,3 +1,7 @@
+![CI](https://github.com/ayushmishraxyz/kasparro-agentic-fb-analyst-ayush-mishra/actions/workflows/ci.yml/badge.svg)
+![coverage](https://img.shields.io/badge/coverage-auto-green)
+
+
 # Kasparro Agentic FB Analyst (v1.0)
 
 An end-to-end **agentic AI system** designed to analyze Facebook Ads performance, diagnose ROAS/CTR issues, and generate data-driven creative recommendations using LLM reasoning and modular pipelines.

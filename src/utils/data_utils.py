@@ -1,54 +1,65 @@
-import pandas as pd
 import yaml
-from src.utils.logging_utils import log_event
+import pandas as pd
+import time
+from pathlib import Path
+from utils.logging_utils import log_event, start_span, end_span
+from typing import Dict
 
+CFG_PATHS = [Path("config/config.yaml"), Path("config.yaml"), Path("src/config.yaml")]
 
-def load_config(path="config/config.yaml"):
-    return yaml.safe_load(open(path, "r"))
+def load_config() -> Dict:
+    for p in CFG_PATHS:
+        if p.exists():
+            try:
+                return yaml.safe_load(open(p, "r"))
+            except Exception:
+                continue
+    return {"data": {"path": "data/synthetic_fb_ads_undergarments.csv"}, "logging": {"log_dir": "logs"}, "analysis": {"low_ctr_threshold": 0.01, "min_impressions": 1000, "roas_threshold": 1.0, "min_clicks": 10}, "creatives": {"top_n": 5, "llm_model": "gpt-4.1"}, "reporting": {"output_path": "reports/report.md"}}
 
-
-def load_dataset():
+def load_dataset(retries=3, delay=1.0):
     cfg = load_config()
-    df = pd.read_csv(cfg["data"]["path"])
-    log_event("data_loaded", {"rows": len(df)})
-    return df
+    path = Path(cfg["data"]["path"])
+    attempt = 0
+    while attempt < retries:
+        try:
+            try:
+                df = pd.read_csv(path)
+            except pd.errors.EmptyDataError:
+                log_event("data.load.success", {"rows": 0, "note": "empty_file"}, agent="DataUtils")
+                return pd.DataFrame()
+            df = df.copy()
+            for col in df.columns:
+                if df[col].dtype == "object":
+                    df[col] = df[col].astype(str).str.strip()
+            log_event("data.load.success", {"rows": len(df)}, agent="DataUtils")
+            return df
+        except FileNotFoundError as e:
+            log_event("data.load.error", {"error": str(e), "attempt": attempt + 1}, agent="DataUtils")
+            attempt += 1
+            time.sleep(delay * attempt)
+        except Exception as e:
+            log_event("data.load.error", {"error": str(e), "attempt": attempt + 1}, agent="DataUtils")
+            attempt += 1
+            time.sleep(delay * attempt)
+    log_event("data.load.failed", {"path": str(path)}, agent="DataUtils")
+    raise FileNotFoundError(f"Could not load dataset after {retries} retries.")
 
+def compute_basic_aggregates(df: pd.DataFrame) -> dict:
+    if df is None or df.empty:
+        return {"rows": 0}
+    res = {"rows": len(df)}
+    if "impressions" in df.columns:
+        res["impressions_sum"] = int(df["impressions"].sum())
+    if "clicks" in df.columns:
+        res["clicks_sum"] = int(df["clicks"].sum())
+    return res
 
-def compute_basic_aggregates(df):
-    """
-    Produces a compact but explicit summary including ALL real segment values.
-    This ensures the LLM can only choose valid segment filters.
-    """
-
-    summary = {}
-
-    # Numeric summary
-    summary["numeric_summary"] = df[[
-        "spend", "impressions", "clicks", "purchases",
-        "revenue", "ctr", "roas"
-    ]].describe().to_dict()
-
-    # Segment values (IMPORTANT: explicit list for LLM)
-    summary["campaign_names"] = sorted(df["campaign_name"].dropna().unique().tolist())
-
-    if "creative_type" in df.columns:
-        summary["creative_types"] = sorted(df["creative_type"].dropna().unique().tolist())
-
-    if "audience_type" in df.columns:
-        summary["audience_types"] = sorted(df["audience_type"].dropna().unique().tolist())
-
-    if "platform" in df.columns:
-        summary["platforms"] = sorted(df["platform"].dropna().unique().tolist())
-
-    if "country" in df.columns:
-        summary["countries"] = sorted(df["country"].dropna().unique().tolist())
-
-    log_event("summary_ready", {
-        "campaign_names": summary.get("campaign_names"),
-        "creative_types": summary.get("creative_types"),
-        "audience_types": summary.get("audience_types"),
-        "platforms": summary.get("platforms"),
-        "countries": summary.get("countries"),
-    })
-
-    return summary
+def write_dead_letter(name: str, payload: dict):
+    DL_DIR = Path("dead_letter")
+    DL_DIR.mkdir(exist_ok=True)
+    ts = pd.Timestamp.utcnow().strftime("%Y%m%dT%H%M%SZ")
+    file = DL_DIR / f"{name}_{ts}.json"
+    with open(file, "w", encoding="utf-8") as f:
+        import json
+        json.dump(payload, f, ensure_ascii=False, indent=2)
+    return str(file)

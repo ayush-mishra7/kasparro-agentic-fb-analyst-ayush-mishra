@@ -1,0 +1,15 @@
+{
+  "creatives": [
+    {
+      "id": "creative_hyp_campaign_low_ctr_0",
+      "linked_hypothesis_id": "hyp_campaign_low_ctr_0",
+      "persona": "Young Women",
+      "angle": "Empowerment",
+      "primary_text": "Elevate Your Style - Women Seamless Eve yday",
+      "headline": "Women Seamless Eve yday - New Arrivals",
+      "description": "Discover the latest seamless designs for women. Shop now and elevate your style!",
+      "cta": "Shop Now",
+      "platform": "facebook|instagram|both"
+    }
+  ]
+}

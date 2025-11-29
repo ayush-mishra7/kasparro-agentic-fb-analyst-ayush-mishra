@@ -1,57 +1,41 @@
 {
   "hypotheses": [
     {
-      "id": "hyp_campaign_low_ctr_49760a",
+      "id": "hyp_campaign_low_ctr_05506c",
       "title": "Low CTR in campaign",
-      "summary": "Campaign 'Women Seamless Eve yday' has the lowest CTR (0.0000).",
+      "summary": "Campaign 'MEN BOL COLORS DROP' has the lowest CTR (0.0045).",
       "segment_filter": {
-        "campaign_name": "Women Seamless Eve yday"
+        "campaign_name": "MEN BOL COLORS DROP"
       },
       "validation": {
         "sample_size": 1,
-        "total_impressions": 435301,
-        "mean_ctr": 0.012377642137279722,
-        "mean_roas": 5.775744934961531,
-        "confidence": 0.7,
+        "total_impressions": 122505,
+        "mean_ctr": 0.004522264397371536,
+        "mean_roas": 0.5543044139246052,
+        "confidence": 0.5,
         "comment": "Validated successfully."
       }
     },
     {
-      "id": "hyp_campaign_low_roas_cc0127",
+      "id": "hyp_campaign_low_roas_b1fc36",
       "title": "Low ROAS in campaign",
-      "summary": "Campaign 'MEN SIGNATURE SOT' has low ROAS (0.00).",
+      "summary": "Campaign 'Men  Bold  Coors  Drop' has low ROAS (0.17).",
       "segment_filter": {
-        "campaign_name": "MEN SIGNATURE SOT"
+        "campaign_name": "Men  Bold  Coors  Drop"
       },
       "validation": {
         "sample_size": 1,
-        "total_impressions": 388868,
-        "mean_ctr": 0.012317804499213101,
-        "mean_roas": 0.9537101707569663,
-        "confidence": 0.7,
+        "total_impressions": 21626,
+        "mean_ctr": 0.007167298622029039,
+        "mean_roas": 0.16723302322990363,
+        "confidence": 0.5,
         "comment": "Validated successfully."
       }
     },
     {
-      "id": "hyp_creative_low_ctr_a951c8",
-      "title": "Low CTR for creative type",
-      "summary": "Creative type 'Video' has low CTR (0.0118).",
-      "segment_filter": {
-        "creative_type": "Video"
-      },
-      "validation": {
-        "sample_size": 1585,
-        "total_impressions": 420546890,
-        "mean_ctr": 0.011847915460746839,
-        "mean_roas": 5.35209605670079,
-        "confidence": 0.7,
-        "comment": "Validated successfully."
-      }
-    },
-    {
-      "id": "hyp_country_low_roas_4bf9fd",
+      "id": "hyp_country_low_roas_655d4a",
       "title": "Low ROAS in country",
-      "summary": "Country 'IN' has low ROAS (5.25).",
+      "summary": "Country 'IN' has low ROAS (8.67).",
       "segment_filter": {
         "country": "IN"
       },
