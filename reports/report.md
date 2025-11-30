@@ -1,12 +1,12 @@
 # Agentic FB Analyst Report
 
-Generated: 2025-11-29T14:02:24.714817Z
+Generated: 2025-11-30T11:37:27.912473Z
 
 ---
 
 ## Insights Summary
 
-### hyp_campaign_low_ctr_05506c — Low CTR in campaign
+### hyp_campaign_low_ctr_a7425f — Low CTR in campaign
 
 Campaign 'MEN BOL COLORS DROP' has the lowest CTR (0.0045).
 
@@ -18,17 +18,17 @@ Campaign 'MEN BOL COLORS DROP' has the lowest CTR (0.0045).
 
 - total_impressions: 122505
 
+- total_clicks: 554
+
 - mean_ctr: 0.004522264397371536
 
 - mean_roas: 0.5543044139246052
 
-- confidence: 0.5
-
-- comment: Validated successfully.
+- confidence: 0.7
 
 
 
-### hyp_campaign_low_roas_b1fc36 — Low ROAS in campaign
+### hyp_campaign_low_roas_9c7f81 — Low ROAS in campaign
 
 Campaign 'Men  Bold  Coors  Drop' has low ROAS (0.17).
 
@@ -40,17 +40,17 @@ Campaign 'Men  Bold  Coors  Drop' has low ROAS (0.17).
 
 - total_impressions: 21626
 
+- total_clicks: 155
+
 - mean_ctr: 0.007167298622029039
 
 - mean_roas: 0.16723302322990363
 
-- confidence: 0.5
-
-- comment: Validated successfully.
+- confidence: 0.7
 
 
 
-### hyp_country_low_roas_655d4a — Low ROAS in country
+### hyp_country_low_roas_f31fd8 — Low ROAS in country
 
 Country 'IN' has low ROAS (8.67).
 
@@ -62,47 +62,47 @@ Country 'IN' has low ROAS (8.67).
 
 - total_impressions: 300910000
 
+- total_clicks: 3450658
+
 - mean_ctr: 0.011467408859791965
 
 - mean_roas: 5.245747030942181
 
 - confidence: 0.7
 
-- comment: Validated successfully.
-
 
 
 
 ## Creative Suggestions
 
-- **Improve results for Campaign 'MEN BOL COLORS DROP' has the lowest CTR (0.0045).** — Boost performance for Campaign 'MEN BOL COLORS DROP' has the lowest CTR (0.0045).
+- **Improve results for Campaign 'MEN BOL COLORS DROP' has the lowest CTR (0.0045).** — Boost performance by addressing: Campaign 'MEN BOL COLORS DROP' has the lowest CTR (0.0045).
+
+  - persona: Young Men | angle: Affordability | cta: Shop Now
+
+
+- **Re-engage audience for Campaign 'MEN BOL COLORS DROP' has the lowest CTR (0.0045).** — Recover performance for: Campaign 'MEN BOL COLORS DROP' has the lowest CTR (0.0045).
 
   - persona: Young Men | angle: Convenience | cta: Learn More
 
 
-- **Re-ignite Campaign 'MEN BOL COLORS DROP' has the lowest CTR (0.0045).** — Re-engage your audience for Campaign 'MEN BOL COLORS DROP' has the lowest CTR (0.0045).
+- **Improve results for Campaign 'Men  Bold  Coors  Drop' has low ROAS (0.17).** — Boost performance by addressing: Campaign 'Men  Bold  Coors  Drop' has low ROAS (0.17).
 
-  - persona: Young Men | angle: Confidence | cta: Shop Now
-
-
-- **Improve results for Campaign 'Men  Bold  Coors  Drop' has low ROAS (0.17).** — Boost performance for Campaign 'Men  Bold  Coors  Drop' has low ROAS (0.17).
-
-  - persona: Young Men | angle: Inspiration | cta: Shop Now
+  - persona: Young Men | angle: Convenience | cta: Shop Now
 
 
-- **Re-ignite Campaign 'Men  Bold  Coors  Drop' has low ROAS (0.17).** — Re-engage your audience for Campaign 'Men  Bold  Coors  Drop' has low ROAS (0.17).
+- **Re-engage audience for Campaign 'Men  Bold  Coors  Drop' has low ROAS (0.17).** — Recover performance for: Campaign 'Men  Bold  Coors  Drop' has low ROAS (0.17).
 
-  - persona: Young Men | angle: Modernity | cta: Shop Now
-
-
-- **Improve results for Country 'IN' has low ROAS (8.67).** — Boost performance for Country 'IN' has low ROAS (8.67).
-
-  - persona: General Audience | angle: Culture | cta: Shop Now
+  - persona: Young Men | angle: Empowerment | cta: Learn More
 
 
-- **Re-ignite Country 'IN' has low ROAS (8.67).** — Re-engage your audience for Country 'IN' has low ROAS (8.67).
+- **Improve results for Country 'IN' has low ROAS (8.67).** — Boost performance by addressing: Country 'IN' has low ROAS (8.67).
 
-  - persona: General Audience | angle: Empowerment | cta: Buy Now
+  - persona: Indian Audience | angle: Sustainability | cta: Learn More
+
+
+- **Re-engage audience for Country 'IN' has low ROAS (8.67).** — Recover performance for: Country 'IN' has low ROAS (8.67).
+
+  - persona: Indian Audience | angle: Sustainability | cta: Shop Now
 
 
 

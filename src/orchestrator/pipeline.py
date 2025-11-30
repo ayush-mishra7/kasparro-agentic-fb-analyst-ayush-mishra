@@ -1,12 +1,12 @@
 import os
 import json
-from utils.logging_utils import log_event, make_trace_id
-from utils.data_utils import load_dataset, compute_basic_aggregates
-from utils.llm_client import LLMClient
-from agents.insight_agent import InsightAgent
-from agents.planner import PlannerAgent
-from agents.evaluator_agent import EvaluatorAgent
-from agents.creative_agent import CreativeAgent
+from src.utils.logging_utils import log_event, make_trace_id
+from src.utils.data_utils import load_dataset, compute_basic_aggregates
+from src.utils.llm_client import LLMClient
+from src.agents.insight_agent import InsightAgent
+from src.agents.planner import PlannerAgent
+from src.agents.evaluator_agent import EvaluatorAgent
+from src.agents.creative_agent import CreativeAgent
 
 def ensure_dir(path):
     os.makedirs(path, exist_ok=True)

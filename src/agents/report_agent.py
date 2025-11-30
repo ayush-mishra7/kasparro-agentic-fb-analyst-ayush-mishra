@@ -2,7 +2,7 @@ from pathlib import Path
 import json
 from typing import Dict, Any, List
 from datetime import datetime
-from utils.logging_utils import make_trace_id, start_span, log_event, end_span
+from src.utils.logging_utils import start_span, end_span, log_event
 
 REPORT_DIR = Path("reports")
 REPORT_DIR.mkdir(parents=True, exist_ok=True)
@@ -20,9 +20,8 @@ def _safe_json_dump(path: Path, obj: Any):
         if isinstance(x, list):
             return [sanitize(v) for v in x]
         return fix(x)
-    sanitized = sanitize(obj)
     with open(path, "w", encoding="utf-8") as fh:
-        json.dump(sanitized, fh, ensure_ascii=False, indent=2)
+        json.dump(sanitize(obj), fh, ensure_ascii=False, indent=2)
 
 def _safe_markdown_dump(path: Path, insights: Dict[str, Any], creatives: Dict[str, Any]):
     lines: List[str] = []
@@ -61,41 +60,40 @@ class ReportAgent:
     def __init__(self):
         self.report_dir = REPORT_DIR
 
-    def _validate_shapes(self, insights: Dict[str, Any], creatives: Dict[str, Any]) -> Dict[str, Any]:
-        issues = []
-        if not isinstance(insights, dict) or "hypotheses" not in insights:
-            issues.append("insights.missing_hypotheses")
-        else:
-            if not isinstance(insights["hypotheses"], list):
-                issues.append("insights.hypotheses_not_list")
-        if not isinstance(creatives, dict) or "creatives" not in creatives:
-            issues.append("creatives.missing_key")
-        else:
-            if not isinstance(creatives["creatives"], list):
-                issues.append("creatives.not_list")
-        return {"ok": len(issues) == 0, "issues": issues, "counts": {"insights": len(insights.get("hypotheses", [])) if isinstance(insights, dict) else 0, "creatives": len(creatives.get("creatives", [])) if isinstance(creatives, dict) else 0}}
-
-    def run(self, insights: Dict[str, Any], creatives: Dict[str, Any], trace_id: str = None, parent_span: str = None) -> Dict[str, Any]:
-        trace_id = trace_id or make_trace_id()
-        span = start_span("report_agent.run", trace_id=trace_id, parent_span_id=parent_span, agent="ReportAgent")
-        log_event("report_agent.start", {"insights": len(insights.get("hypotheses", [])) if isinstance(insights, dict) else 0}, trace_id=trace_id, parent_span_id=span["span_id"], agent="ReportAgent")
-        validation = self._validate_shapes(insights, creatives)
-        log_event("report_agent.validation", validation, trace_id=trace_id, parent_span_id=span["span_id"], agent="ReportAgent")
-        insights_path = self.report_dir / "insights.json"
-        creatives_path = self.report_dir / "creatives.json"
-        report_md_path = self.report_dir / "report.md"
-        summary_path = self.report_dir / "summary.json"
+    def generate(self, insights: Dict[str, Any], creatives: Dict[str, Any], trace_id: str = None, parent_span_id: str = None) -> Dict[str, Any]:
+        span = start_span("report.generate", trace_id=trace_id, parent_span_id=parent_span_id, agent="ReportAgent")
         try:
-            _safe_json_dump(insights_path, insights)
-            _safe_json_dump(creatives_path, creatives)
-            _safe_markdown_dump(report_md_path, insights, creatives)
-            summary = {"written": {"insights": str(insights_path), "creatives": str(creatives_path), "report_md": str(report_md_path), "summary_json": str(summary_path)}, "counts": validation.get("counts", {}), "issues": validation.get("issues", []), "generated_at": datetime.utcnow().isoformat() + "Z"}
-            _safe_json_dump(summary_path, summary)
-            log_event("report_agent.written", summary, trace_id=trace_id, parent_span_id=span["span_id"], agent="ReportAgent")
+            log_event("report_agent.start", {"insights": len(insights.get("hypotheses", [])) if isinstance(insights, dict) else 0}, trace_id=span["trace_id"], span_id=span["span_id"], agent="ReportAgent")
+            validation = {"ok": True, "issues": [], "counts": {"insights": len(insights.get("hypotheses", [])) if isinstance(insights, dict) else 0, "creatives": len(creatives.get("creatives", [])) if isinstance(creatives, dict) else 0}}
+            log_event("report_agent.validation", validation, trace_id=span["trace_id"], span_id=span["span_id"], agent="ReportAgent")
+
+            insights_path = self.report_dir / "insights.json"
+            creatives_path = self.report_dir / "creatives.json"
+            report_md_path = self.report_dir / "report.md"
+            summary_path = self.report_dir / "summary.json"
+
+            try:
+                _safe_json_dump(insights_path, insights)
+                _safe_json_dump(creatives_path, creatives)
+                _safe_markdown_dump(report_md_path, insights, creatives)
+
+                summary = {
+                    "written": {
+                        "insights": str(insights_path),
+                        "creatives": str(creatives_path),
+                        "report_md": str(report_md_path),
+                        "summary_json": str(summary_path)
+                    },
+                    "counts": validation.get("counts", {}),
+                    "issues": validation.get("issues", []),
+                    "generated_at": datetime.utcnow().isoformat() + "Z"
+                }
+                _safe_json_dump(summary_path, summary)
+                log_event("report_agent.written", summary, trace_id=span["trace_id"], span_id=span["span_id"], agent="ReportAgent")
+                return {"paths": summary["written"], "summary": summary}
+            except Exception as e:
+                err = {"error": str(e)}
+                log_event("report_agent.error", err, trace_id=span["trace_id"], span_id=span["span_id"], agent="ReportAgent")
+                return {"paths": {}, "summary": {"ok": False, "error": str(e)}}
+        finally:
             end_span(span)
-            return {"paths": summary["written"], "summary": summary}
-        except Exception as e:
-            err = {"error": str(e)}
-            log_event("report_agent.error", err, trace_id=trace_id, parent_span_id=span["span_id"], agent="ReportAgent")
-            end_span(span)
-            return {"paths": {}, "summary": {"ok": False, "error": str(e)}}

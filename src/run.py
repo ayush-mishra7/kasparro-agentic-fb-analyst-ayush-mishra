@@ -1,114 +1,59 @@
-import sys
-from pathlib import Path
-import pandas as pd
-
-from utils.logging_utils import start_span, end_span, log_event
-from agents.planner import PlannerAgent
-from utils.data_utils import load_dataset
-from agents.insight_agent import InsightAgent
-from agents.evaluator_agent import EvaluatorAgent
-from agents.creative_agent import CreativeAgent
-from agents.report_agent import ReportAgent
+from src.utils.logging_utils import start_span, end_span, log_event
+from src.utils.data_utils import load_dataset
+from src.agents.planner import PlannerAgent
+from src.agents.insight_agent import InsightAgent
+from src.agents.evaluator_agent import EvaluatorAgent
+from src.agents.creative_agent import CreativeAgent
+from src.agents.report_agent import ReportAgent
 
 def main():
-    root_span = start_span("pipeline.start", agent="Pipeline")
+    root = start_span("pipeline.start", agent="Pipeline")
 
     try:
         planner = PlannerAgent()
-        planner_span = start_span(
-            "planner.run",
-            trace_id=root_span["trace_id"],
-            parent_span_id=root_span["span_id"],
-            agent="PlannerAgent"
-        )
-        plan = planner.generate_plan(trace_id=planner_span["trace_id"])
-        end_span(planner_span)
+        pspan = start_span("planner.run", trace_id=root["trace_id"], agent="PlannerAgent")
+        plan = planner.run(trace_id=pspan["trace_id"])
+        end_span(pspan)
 
         if "load_dataset" in plan:
-            ds_span = start_span(
-                "dataset.load",
-                trace_id=root_span["trace_id"],
-                parent_span_id=root_span["span_id"]
-            )
+            ds = start_span("dataset.load", trace_id=root["trace_id"], agent="Dataset")
             df = load_dataset()
-            end_span(ds_span)
+            end_span(ds)
         else:
             df = None
 
         if "generate_insights" in plan:
-            insight_agent = InsightAgent()
-            ins_span = start_span(
-                "insight.generate",
-                trace_id=root_span["trace_id"],
-                parent_span_id=root_span["span_id"]
-            )
-            insights = insight_agent.generate_insights(
-                df,
-                trace_id=root_span["trace_id"],
-                parent_span=ins_span["span_id"]
-            )
-            end_span(ins_span)
+            ins_agent = InsightAgent()
+            ins = start_span("insight.generate", trace_id=root["trace_id"], agent="InsightAgent")
+            insights = ins_agent.generate(df)
+            end_span(ins)
         else:
-            insights = {"hypotheses": []}
+            insights = None
 
         if "evaluate_insights" in plan:
-            evaluator = EvaluatorAgent()
-            ev_span = start_span(
-                "insights.evaluate",
-                trace_id=root_span["trace_id"],
-                parent_span_id=root_span["span_id"]
-            )
-            evaluated = evaluator.evaluate(
-                df,
-                insights,
-                trace_id=root_span["trace_id"],
-                parent_span=ev_span["span_id"]
-            )
-            end_span(ev_span)
-        else:
-            evaluated = {"hypotheses": []}
+            ev_agent = EvaluatorAgent()
+            ev = start_span("insights.evaluate", trace_id=root["trace_id"], agent="EvaluatorAgent")
+            insights = ev_agent.evaluate(df, insights)
+            end_span(ev)
 
         if "generate_creatives" in plan:
-            creative = CreativeAgent()
-            cr_span = start_span(
-                "creatives.generate",
-                trace_id=root_span["trace_id"],
-                parent_span_id=root_span["span_id"]
-            )
-            creatives = creative.generate_creatives(
-                evaluated,
-                trace_id=root_span["trace_id"],
-                parent_span=cr_span["span_id"]
-            )
-            end_span(cr_span)
+            cr_agent = CreativeAgent()
+            cr = start_span("creatives.generate", trace_id=root["trace_id"], agent="CreativeAgent")
+            creatives = cr_agent.generate_creatives(insights)
+            end_span(cr)
         else:
-            creatives = {"creatives": []}
+            creatives = None
 
         if "generate_report" in plan:
-            reporter = ReportAgent()
-            rp_span = start_span(
-                "report.generate",
-                trace_id=root_span["trace_id"],
-                parent_span_id=root_span["span_id"]
-            )
-            reporter.run(
-                evaluated,
-                creatives,
-                trace_id=root_span["trace_id"],
-                parent_span=rp_span["span_id"]
-            )
-            end_span(rp_span)
+            rp_agent = ReportAgent()
+            rp = start_span("report.generate", trace_id=root["trace_id"], agent="ReportAgent")
+            rp_agent.generate(insights, creatives, trace_id=root["trace_id"])
+            end_span(rp)
 
     except Exception as e:
-        log_event(
-            "pipeline.error",
-            {"error": str(e)},
-            trace_id=root_span["trace_id"],
-            agent="Pipeline"
-        )
-
+        log_event("pipeline.error", {"error": str(e)}, trace_id=root["trace_id"], agent="Pipeline")
     finally:
-        end_span(root_span)
+        end_span(root)
 
 if __name__ == "__main__":
     main()
